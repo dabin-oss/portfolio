@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yu Dabin — UX/UI Designer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Plus+Jakarta+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+:root{
+  --bg:#F9F8F5;
+  --text:#1A1A18;
+  --muted:#6B6B63;
+  --subtle:#A8A89E;
+  --accent:#1B6B55;
+  --accent-bg:#E8F4F0;
+  --border:rgba(26,26,24,.1);
+  --border-mid:rgba(26,26,24,.18);
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Plus Jakarta Sans',system-ui,sans-serif;
+  --ease:cubic-bezier(.25,.46,.45,.94);
+}
+
+html{scroll-behavior:smooth;}
+
+body{
+  font-family:var(--sans);
+  background:var(--bg);
+  color:var(--text);
+  font-size:16px;
+  line-height:1.7;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── CURSOR ── */
+.cursor{
+  position:fixed;width:8px;height:8px;
+  background:var(--text);border-radius:50%;
+  pointer-events:none;z-index:9999;
+  transition:transform .15s var(--ease),background .2s;
+  transform:translate(-50%,-50%);
+}
+.cursor.expand{transform:translate(-50%,-50%) scale(4);background:rgba(26,26,24,.12);}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:1.35rem 2.5rem;
+  display:flex;justify-content:space-between;align-items:center;
+  transition:background .4s var(--ease),border-color .4s;
+}
+nav.scrolled{
+  background:rgba(249,248,245,.88);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border-bottom:.5px solid var(--border);
+}
+.nav-logo{
+  font-family:var(--serif);font-size:20px;font-weight:400;
+  letter-spacing:.02em;text-decoration:none;color:var(--text);
+}
+.nav-links{display:flex;gap:2.25rem;list-style:none;}
+.nav-links a{
+  font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  text-decoration:none;color:var(--muted);
+  transition:color .25s;
+}
+.nav-links a:hover{color:var(--text);}
+
+/* ── HERO ── */
+.hero{
+  min-height:100svh;min-height:100vh;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:0 2.5rem 4.5rem;position:relative;overflow:hidden;
+}
+
+.hero-eyebrow{
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--subtle);margin-bottom:.9rem;
+  opacity:0;transform:translateY(18px);
+  animation:fadeUp .8s var(--ease) forwards .25s;
+}
+.hero-name{
+  font-family:var(--serif);
+  font-size:clamp(80px,13vw,164px);
+  font-weight:300;line-height:.9;letter-spacing:-.025em;
+  margin-bottom:2.5rem;
+  opacity:0;transform:translateY(36px);
+  animation:fadeUp 1s var(--ease) forwards .45s;
+}
+.hero-bottom{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  flex-wrap:wrap;gap:1.5rem;
+  opacity:0;transform:translateY(18px);
+  animation:fadeUp .8s var(--ease) forwards .8s;
+}
+.hero-desc{font-size:15px;color:var(--muted);line-height:1.85;max-width:360px;}
+.hero-meta{font-size:12px;color:var(--subtle);line-height:2;text-align:right;}
+
+.hero-badge{
+  position:absolute;bottom:4.5rem;right:2.5rem;
+  display:flex;align-items:center;gap:.65rem;
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--subtle);
+  opacity:0;animation:fadeIn .8s var(--ease) forwards 1.2s;
+}
+.scroll-bar{
+  width:40px;height:1px;background:rgba(26,26,24,.15);
+  position:relative;overflow:hidden;
+}
+.scroll-bar::after{
+  content:'';position:absolute;top:0;left:-100%;
+  width:100%;height:100%;background:var(--text);
+  animation:runBar 1.8s ease-in-out infinite 1.4s;
+}
+
+/* line that crosses the hero diagonally */
+.hero-line{
+  position:absolute;top:0;right:18vw;width:.5px;height:100%;
+  background:linear-gradient(to bottom,transparent,rgba(26,26,24,.08) 40%,rgba(26,26,24,.08) 60%,transparent);
+  pointer-events:none;
+}
+
+/* ── SECTIONS ── */
+section{padding:5.5rem 2.5rem;border-top:.5px solid var(--border);}
+
+.section-row{
+  display:flex;align-items:baseline;gap:1.5rem;margin-bottom:3.5rem;
+}
+.section-num{font-size:11px;letter-spacing:.1em;color:var(--subtle);}
+.section-label-txt{
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);font-weight:400;
+}
+
+/* ── REVEAL ── */
+.reveal{
+  opacity:0;transform:translateY(28px);
+  transition:opacity .75s var(--ease),transform .75s var(--ease);
+}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal.d1{transition-delay:.1s;}
+.reveal.d2{transition-delay:.2s;}
+.reveal.d3{transition-delay:.3s;}
+
+/* ── ABOUT ── */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;}
+.about-statement{
+  font-family:var(--serif);
+  font-size:clamp(22px,3vw,32px);
+  font-weight:300;line-height:1.45;letter-spacing:-.015em;
+}
+.about-statement em{color:var(--accent);font-style:italic;}
+
+.strengths{display:flex;flex-direction:column;gap:1.75rem;}
+.strength{padding-left:1.2rem;border-left:1.5px solid var(--accent);}
+.strength-title{font-size:13px;font-weight:500;margin-bottom:.35rem;}
+.strength-body{font-size:13px;color:var(--muted);line-height:1.75;}
+
+/* ── CASES ── */
+.case{
+  border:.5px solid var(--border);border-radius:14px;
+  margin-bottom:10px;overflow:hidden;
+  transition:border-color .3s,box-shadow .3s;
+}
+.case:hover{border-color:var(--border-mid);}
+.case.open{box-shadow:0 2px 24px rgba(26,26,24,.07);}
+
+.case-hd{
+  padding:1.5rem 2rem;display:flex;
+  justify-content:space-between;align-items:center;gap:1.5rem;
+  cursor:pointer;transition:background .2s;
+}
+.case-hd:hover{background:rgba(26,26,24,.025);}
+
+.case-co{
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--subtle);margin-bottom:.4rem;
+}
+.case-title{font-size:16px;font-weight:500;letter-spacing:-.01em;}
+
+.case-right{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+
+.badge{font-size:11px;padding:4px 12px;border-radius:99px;white-space:nowrap;}
+.badge-teal{background:var(--accent-bg);color:var(--accent);}
+.badge-gray{background:rgba(26,26,24,.06);color:var(--muted);}
+.badge-amber{background:#FEF3E2;color:#8C5209;}
+
+.ch-icon{
+  width:22px;height:22px;display:flex;align-items:center;justify-content:center;
+  border-radius:50%;border:.5px solid var(--border);flex-shrink:0;
+  transition:transform .35s var(--ease),background .25s,border-color .25s;
+}
+.ch-icon svg{stroke:var(--subtle);transition:stroke .25s;}
+.case.open .ch-icon{transform:rotate(180deg);background:var(--text);border-color:var(--text);}
+.case.open .ch-icon svg{stroke:var(--bg);}
+
+.case-bd{max-height:0;overflow:hidden;transition:max-height .55s var(--ease);}
+.case-bd-inner{
+  padding:1.75rem 2rem 2.25rem;
+  border-top:.5px solid var(--border);
+}
+
+.case-summary{
+  font-size:14px;color:var(--muted);line-height:1.85;
+  margin-bottom:1.5rem;max-width:640px;
+}
+
+.steps{display:flex;gap:3px;margin-bottom:1.35rem;}
+.step{
+  flex:1;padding:.8rem .5rem;
+  background:rgba(26,26,24,.04);border-radius:6px;text-align:center;
+  transition:background .2s;
+}
+.step.on{background:var(--accent-bg);}
+.step-n{display:block;font-size:10px;color:var(--subtle);margin-bottom:3px;letter-spacing:.04em;}
+.step.on .step-n{color:var(--accent);opacity:.75;}
+.step-lb{display:block;font-size:11.5px;font-weight:500;color:var(--muted);}
+.step.on .step-lb{color:var(--accent);}
+
+.case-tools{
+  font-size:12px;color:var(--subtle);
+  padding-bottom:1.25rem;margin-bottom:1.25rem;
+  border-bottom:.5px solid var(--border);
+}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.stat{background:rgba(26,26,24,.04);border-radius:8px;padding:.9rem 1.1rem;}
+.stat-n{font-size:22px;font-weight:500;letter-spacing:-.02em;line-height:1;}
+.stat-lb{font-size:11px;color:var(--muted);margin-top:5px;}
+
+/* ── SKILLS ── */
+.skills-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2.5rem;}
+.sg-label{
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--subtle);margin-bottom:.75rem;
+  padding-bottom:.5rem;border-bottom:.5px solid var(--border);
+}
+.chips{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{
+  font-size:12px;padding:4px 12px;
+  border:.5px solid var(--border);border-radius:99px;
+  color:var(--muted);transition:border-color .2s,color .2s;
+}
+.chip:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ── EDU / CERT ── */
+.edu-cert-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;}
+.edu-item{padding-bottom:1.35rem;margin-bottom:1.35rem;border-bottom:.5px solid var(--border);}
+.edu-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.edu-degree{font-size:15px;font-weight:500;margin-bottom:.3rem;}
+.edu-detail{font-size:13px;color:var(--muted);}
+
+.cert-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.cert-item{background:rgba(26,26,24,.04);border-radius:8px;padding:.9rem 1rem;}
+.cert-name{font-size:13px;font-weight:500;margin-bottom:.2rem;}
+.cert-sub{font-size:11px;color:var(--subtle);}
+
+/* ── CONTACT ── */
+.contact-wrap{
+  padding:6.5rem 2.5rem 5.5rem;
+  border-top:.5px solid var(--border);text-align:center;
+}
+.contact-eyebrow{
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--subtle);margin-bottom:1.75rem;
+}
+.contact-email{
+  font-family:var(--serif);
+  font-size:clamp(28px,5vw,56px);
+  font-weight:300;letter-spacing:-.01em;
+  color:var(--text);text-decoration:none;
+  display:inline-block;
+  border-bottom:1px solid rgba(26,26,24,.2);
+  padding-bottom:4px;
+  transition:color .3s,border-color .3s;
+}
+.contact-email:hover{color:var(--accent);border-color:var(--accent);}
+.contact-sub{font-size:14px;color:var(--subtle);margin-top:1.5rem;}
+
+/* ── FOOTER ── */
+footer{
+  padding:1.5rem 2.5rem;border-top:.5px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:12px;color:var(--subtle);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{
+  to{opacity:1;transform:translateY(0);}
+}
+@keyframes fadeIn{
+  to{opacity:1;}
+}
+@keyframes runBar{
+  0%{left:-100%;}
+  50%{left:0%;}
+  100%{left:100%;}
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .skills-grid{grid-template-columns:1fr 1fr;}
+}
+
+@media(max-width:768px){
+  nav{padding:1rem 1.25rem;}
+  .nav-links{display:none;}
+  .hero{padding:0 1.25rem 3.5rem;}
+  .hero-line{display:none;}
+  .hero-badge{right:1.25rem;bottom:3.5rem;}
+  section{padding:3.75rem 1.25rem;}
+  .about-grid{grid-template-columns:1fr;gap:2.5rem;}
+  .case-hd{padding:1.25rem;flex-wrap:wrap;}
+  .case-right .badge{display:none;}
+  .case-bd-inner{padding:1.25rem;}
+  .steps{flex-wrap:wrap;}
+  .step{flex:calc(33.33% - 3px);min-width:0;}
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .skills-grid{grid-template-columns:1fr 1fr;}
+  .edu-cert-grid{grid-template-columns:1fr;gap:2.5rem;}
+  .contact-wrap{padding:4rem 1.25rem 3.5rem;}
+  footer{flex-direction:column;gap:.5rem;text-align:center;}
+}
+
+@media(max-width:480px){
+  .hero-meta{display:none;}
+  .skills-grid{grid-template-columns:1fr;}
+  .cert-grid{grid-template-columns:1fr;}
+  .stats{grid-template-columns:1fr;}
+  .step{flex:calc(50% - 3px);}
+}
+</style>
+</head>
+<body>
+
+<!-- Custom cursor (desktop only) -->
+<div class="cursor" id="cursor"></div>
+
+<!-- ── NAV ── -->
+<nav id="nav">
+  <a href="#top" class="nav-logo">YD</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#edu">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<div id="top"></div>
+<div class="hero">
+  <div class="hero-line"></div>
+  <p class="hero-eyebrow">UX / UI Designer · Seoul</p>
+  <h1 class="hero-name">Yu<br>Dabin</h1>
+  <div class="hero-bottom">
+    <p class="hero-desc">
+      기획부터 런칭까지 전 과정을 이끄는 디자이너.<br>
+      AI 툴과 코드로 더 빠르고 정교하게,<br>
+      HealthTech 제품의 0→1을 만들어온 경험.
+    </p>
+    <div class="hero-meta">
+      <div>elin.page15@gmail.com</div>
+      <div>010-8524-8331</div>
+      <div>ellie_portfolio.pr</div>
+    </div>
+  </div>
+  <div class="hero-badge">
+    <div class="scroll-bar"></div>
+    <span>Scroll</span>
+  </div>
+</div>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="section-row reveal">
+    <span class="section-num">01</span>
+    <span class="section-label-txt">About</span>
+  </div>
+  <div class="about-grid">
+    <p class="about-statement reveal d1">
+      <em>기획부터 런칭까지.</em><br>
+      디자인과 개발, AI의 경계를 넘나들며<br>
+      제품의 전 과정을 이끌 수 있는 디자이너입니다.
+    </p>
+    <div class="strengths">
+      <div class="strength reveal d1">
+        <div class="strength-title">Product Design — 0→1</div>
+        <div class="strength-body">HealthTech 웹 서비스를 초기 기획부터 런칭 및 운영까지 메인 디자이너로 전 과정을 담당한 경험.</div>
+      </div>
+      <div class="strength reveal d2">
+        <div class="strength-title">AI-Native Workflow</div>
+        <div class="strength-body">Claude Code 바이브코딩, Figma Make로 디자인 산출물을 코드로 직접 구현. 실무 전반에 AI 통합.</div>
+      </div>
+      <div class="strength reveal d3">
+        <div class="strength-title">Brand & Visual</div>
+        <div class="strength-body">에이전시에서 CI/BI, 패키지, 웹 등 다양한 분야의 브랜드 시각물을 기획부터 납품까지 담당.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WORK ── -->
+<section id="work">
+  <div class="section-row reveal">
+    <span class="section-num">02</span>
+    <span class="section-label-txt">Work Experience</span>
+  </div>
+
+  <!-- Case 1 -->
+  <div class="case reveal" id="c1">
+    <div class="case-hd" onclick="toggleCase('c1')">
+      <div>
+        <p class="case-co">(주)미니쉬테크놀로지 · HealthTech · 2023.05 – 2024.05</p>
+        <p class="case-title">헬스케어 웹 서비스 0→1 프로덕트 디자인</p>
+      </div>
+      <div class="case-right">
+        <span class="badge badge-teal">메인 디자이너</span>
+        <div class="ch-icon"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke-width="1.6"><polyline points="1.5,3.5 5,6.8 8.5,3.5"/></svg></div>
+      </div>
+    </div>
+    <div class="case-bd" id="c1-bd">
+      <div class="case-bd-inner">
+        <p class="case-summary">웹 프로젝트 초기 기획부터 런칭 및 운영까지 메인 디자이너로 전 과정 참여. 팀과 함께 서비스 방향을 정의하고, UX 구조 설계부터 UI 시스템 구축, 개발팀 협업, QA, 운영까지 단일 포인트로 리드했습니다. HealthTech 도메인에서 사용자 경험과 비즈니스 목표를 균형 있게 설계한 경험입니다.</p>
+        <div class="steps">
+          <div class="step on"><span class="step-n">01</span><span class="step-lb">서비스 기획</span></div>
+          <div class="step on"><span class="step-n">02</span><span class="step-lb">UX 설계</span></div>
+          <div class="step on"><span class="step-n">03</span><span class="step-lb">UI 디자인</span></div>
+          <div class="step on"><span class="step-n">04</span><span class="step-lb">개발 협업</span></div>
+          <div class="step on"><span class="step-n">05</span><span class="step-lb">런칭·운영</span></div>
+        </div>
+        <p class="case-tools">사용 툴: Figma (Figma Make) · Claude · Google Analytics · Notion</p>
+        <div class="stats">
+          <div class="stat"><div class="stat-n">0→1</div><div class="stat-lb">신규 서비스 구축</div></div>
+          <div class="stat"><div class="stat-n">1년</div><div class="stat-lb">전 과정 메인 담당</div></div>
+          <div class="stat"><div class="stat-n">주임</div><div class="stat-lb">Product Designer</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Case 2 -->
+  <div class="case reveal d1" id="c2">
+    <div class="case-hd" onclick="toggleCase('c2')">
+      <div>
+        <p class="case-co">(주)어트랙션 · Design Agency · 2022.02 – 2023.02</p>
+        <p class="case-title">브랜드 시각물 & 웹 디자인 다수 프로젝트</p>
+      </div>
+      <div class="case-right">
+        <span class="badge badge-gray">Designer</span>
+        <div class="ch-icon"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke-width="1.6"><polyline points="1.5,3.5 5,6.8 8.5,3.5"/></svg></div>
+      </div>
+    </div>
+    <div class="case-bd" id="c2-bd">
+      <div class="case-bd-inner">
+        <p class="case-summary">홈페이지·상세페이지·콘텐츠·패키지 기획 및 디자인. CI/BI 포함 전반적인 브랜드 시각물 제작. 에이전시 환경에서 다양한 산업군 클라이언트의 브랜드 아이덴티티를 기획부터 납품까지 경험하며 빠른 실행력과 시각적 완성도를 동시에 길렀습니다.</p>
+        <div class="steps">
+          <div class="step on"><span class="step-n">01</span><span class="step-lb">클라이언트 브리핑</span></div>
+          <div class="step on"><span class="step-n">02</span><span class="step-lb">기획·콘셉트</span></div>
+          <div class="step on"><span class="step-n">03</span><span class="step-lb">시각 디자인</span></div>
+          <div class="step on"><span class="step-n">04</span><span class="step-lb">납품·피드백</span></div>
+          <div class="step"><span class="step-n">—</span><span class="step-lb" style="color:#C0C0B8;">—</span></div>
+        </div>
+        <p class="case-tools">사용 툴: Figma · Photoshop · Illustrator · InDesign</p>
+        <div class="stats">
+          <div class="stat"><div class="stat-n">다수</div><div class="stat-lb">클라이언트 프로젝트</div></div>
+          <div class="stat"><div class="stat-n">CI/BI</div><div class="stat-lb">브랜드 아이덴티티</div></div>
+          <div class="stat"><div class="stat-n">패키지</div><div class="stat-lb">패키지 디자인 포함</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Case 3: AI -->
+  <div class="case reveal d2" id="c3">
+    <div class="case-hd" onclick="toggleCase('c3')">
+      <div>
+        <p class="case-co">개인 역량 · AI × Design · 2024 – 현재</p>
+        <p class="case-title">AI 툴 × 바이브코딩 — 디자인과 개발의 경계를 넘다</p>
+      </div>
+      <div class="case-right">
+        <span class="badge badge-amber">AI-Native</span>
+        <div class="ch-icon"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke-width="1.6"><polyline points="1.5,3.5 5,6.8 8.5,3.5"/></svg></div>
+      </div>
+    </div>
+    <div class="case-bd" id="c3-bd">
+      <div class="case-bd-inner">
+        <p class="case-summary">Claude Code 바이브코딩과 Figma Make를 활용해 디자인 산출물을 코드로 직접 구현하는 워크플로우를 구축했습니다. 문서 기획, 콘텐츠 제작, UI 구현까지 AI를 실무 전반에 통합하여 1인 제작 속도와 완성도를 동시에 높였습니다. 디자이너와 개발자의 경계를 넘는 역량으로, 빠른 실행이 핵심인 스타트업 환경에 최적화되어 있습니다.</p>
+        <div class="steps">
+          <div class="step on"><span class="step-n">01</span><span class="step-lb">기획·문서</span></div>
+          <div class="step on"><span class="step-n">02</span><span class="step-lb">Figma 디자인</span></div>
+          <div class="step on"><span class="step-n">03</span><span class="step-lb">AI 코드 생성</span></div>
+          <div class="step on"><span class="step-n">04</span><span class="step-lb">배포·운영</span></div>
+          <div class="step"><span class="step-n">—</span><span class="step-lb" style="color:#C0C0B8;">—</span></div>
+        </div>
+        <p class="case-tools">활용 툴: Claude Code · Figma Make · ChatGPT · Midjourney · Gemini · Perplexity · VSCode</p>
+        <div class="stats">
+          <div class="stat"><div class="stat-n">기획</div><div class="stat-lb">문서·전략 AI 활용</div></div>
+          <div class="stat"><div class="stat-n">코딩</div><div class="stat-lb">바이브코딩 구현</div></div>
+          <div class="stat"><div class="stat-n">원스탑</div><div class="stat-lb">디자인→개발 직접</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Case 4: Internship -->
+  <div class="case reveal d3" id="c4">
+    <div class="case-hd" onclick="toggleCase('c4')">
+      <div>
+        <p class="case-co">윌로프 청담 · Fine Dining · 2020.11 – 2021.02</p>
+        <p class="case-title">게스트 익스피리언스 매니저 인턴십</p>
+      </div>
+      <div class="case-right">
+        <span class="badge badge-gray">Internship</span>
+        <div class="ch-icon"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke-width="1.6"><polyline points="1.5,3.5 5,6.8 8.5,3.5"/></svg></div>
+      </div>
+    </div>
+    <div class="case-bd" id="c4-bd">
+      <div class="case-bd-inner">
+        <p class="case-summary">코스요리 메뉴 안내 및 예약 관리, 외국인 고객 대상 영어 커뮤니케이션, 알러지·메뉴 변경 등 특별 요청 대응. 파인다이닝 서비스 전반을 운영하며 높은 수준의 고객 경험(UX) 사고방식과 서비스 감수성을 갖추게 된 계기가 되었습니다.</p>
+        <div class="stats" style="grid-template-columns:repeat(2,1fr);">
+          <div class="stat"><div class="stat-n">3개월</div><div class="stat-lb">인턴십 기간</div></div>
+          <div class="stat"><div class="stat-n">영어</div><div class="stat-lb">외국인 고객 응대</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SKILLS ── -->
+<section id="skills">
+  <div class="section-row reveal">
+    <span class="section-num">03</span>
+    <span class="section-label-txt">Skills & Tools</span>
+  </div>
+  <div class="skills-grid">
+    <div class="reveal d1">
+      <p class="sg-label">Design</p>
+      <div class="chips">
+        <span class="chip">Figma</span>
+        <span class="chip">Figma Make</span>
+        <span class="chip">Photoshop</span>
+        <span class="chip">Illustrator</span>
+        <span class="chip">InDesign</span>
+      </div>
+    </div>
+    <div class="reveal d2">
+      <p class="sg-label">Development</p>
+      <div class="chips">
+        <span class="chip">HTML</span>
+        <span class="chip">CSS</span>
+        <span class="chip">JavaScript</span>
+        <span class="chip">Claude Code</span>
+        <span class="chip">VSCode</span>
+      </div>
+    </div>
+    <div class="reveal d1">
+      <p class="sg-label">AI Tools</p>
+      <div class="chips">
+        <span class="chip">Claude</span>
+        <span class="chip">ChatGPT</span>
+        <span class="chip">Midjourney</span>
+        <span class="chip">Gemini</span>
+        <span class="chip">Perplexity</span>
+      </div>
+    </div>
+    <div class="reveal d2">
+      <p class="sg-label">Analytics & Ops</p>
+      <div class="chips">
+        <span class="chip">Google Analytics</span>
+        <span class="chip">Notion</span>
+        <span class="chip">Slack</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── EDUCATION & CERTIFICATIONS ── -->
+<section id="edu">
+  <div class="section-row reveal">
+    <span class="section-num">04</span>
+    <span class="section-label-txt">Education & Certifications</span>
+  </div>
+  <div class="edu-cert-grid">
+    <div class="reveal">
+      <div class="edu-item">
+        <p class="edu-degree">경영학사 경영학</p>
+        <p class="edu-detail">4년제 대학교 · 서울 · 2025 졸업 · GPA 3.75 / 4.5</p>
+      </div>
+    </div>
+    <div class="cert-grid reveal d1">
+      <div class="cert-item">
+        <p class="cert-name">매경 TEST 우수</p>
+        <p class="cert-sub">매일경제신문사 · 2024</p>
+      </div>
+      <div class="cert-item">
+        <p class="cert-name">SMAT 1급</p>
+        <p class="cert-sub">서비스경영자격 · 한국생산성본부 · 2023</p>
+      </div>
+      <div class="cert-item">
+        <p class="cert-name">GTQ 1급</p>
+        <p class="cert-sub">한국생산성본부 · 2021</p>
+      </div>
+      <div class="cert-item">
+        <p class="cert-name">컴퓨터활용능력 2급</p>
+        <p class="cert-sub">대한상공회의소 · 2021</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ── -->
+<div class="contact-wrap" id="contact">
+  <p class="contact-eyebrow reveal">Let's Work Together</p>
+  <div class="reveal d1">
+    <a href="mailto:elin.page15@gmail.com" class="contact-email">elin.page15@gmail.com</a>
+  </div>
+  <p class="contact-sub reveal d2">010-8524-8331 · Seoul, Korea</p>
+</div>
+
+<footer>
+  <span>© 2025 Yu Dabin</span>
+  <span>UX / UI Designer</span>
+</footer>
+
+<script>
+/* ── CURSOR ── */
+const cursor = document.getElementById('cursor');
+let mx=0,my=0,cx=0,cy=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+document.querySelectorAll('a,button,.case-hd,.chip').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cursor.classList.add('expand'));
+  el.addEventListener('mouseleave',()=>cursor.classList.remove('expand'));
+});
+function animateCursor(){
+  cx+=(mx-cx)*.18; cy+=(my-cy)*.18;
+  cursor.style.left=cx+'px'; cursor.style.top=cy+'px';
+  requestAnimationFrame(animateCursor);
+}
+if(window.matchMedia('(pointer:fine)').matches) animateCursor();
+else cursor.style.display='none';
+
+/* ── NAV SCROLL ── */
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',scrollY>60);},{passive:true});
+
+/* ── REVEAL ── */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}
+  });
+},{threshold:.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+/* ── CASE TOGGLE ── */
+function toggleCase(id){
+  const card=document.getElementById(id);
+  const bd=document.getElementById(id+'-bd');
+  const isOpen=card.classList.contains('open');
+  document.querySelectorAll('.case').forEach(c=>c.classList.remove('open'));
+  document.querySelectorAll('.case-bd').forEach(b=>b.style.maxHeight='0');
+  if(!isOpen){
+    card.classList.add('open');
+    bd.style.maxHeight=bd.scrollHeight+'px';
+    setTimeout(()=>card.scrollIntoView({behavior:'smooth',block:'nearest'}),100);
+  }
+}
+</script>
+</body>
+</html>
