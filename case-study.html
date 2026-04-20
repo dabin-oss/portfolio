@@ -1,0 +1,3090 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Club Minish Case Study · YDB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+<style>
+/* =============================================
+   RESET & BASE
+   ============================================= */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0c10;
+  --bg2: #0f1218;
+  --bg3: #151a22;
+  --bg-card: #12161e;
+  --surface: #1a2030;
+  --surface2: #1e2636;
+  --blue: #2563eb;
+  --blue-light: #3b82f6;
+  --blue-dim: #1d4ed8;
+  --blue-glow: rgba(37,99,235,0.18);
+  --blue-subtle: rgba(37,99,235,0.08);
+  --text: #f0f2f5;
+  --text-secondary: #8b95a8;
+  --text-muted: #4a5568;
+  --border: rgba(255,255,255,0.07);
+  --border-blue: rgba(37,99,235,0.3);
+  --font: 'Pretendard', -apple-system, sans-serif;
+  --radius: 12px;
+  --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.7;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* =============================================
+   PAGE SYSTEM
+   ============================================= */
+.page { display: none; min-height: 100vh; }
+.page.active { display: block; }
+
+/* =============================================
+   MAIN NAV
+   ============================================= */
+#main-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 48px;
+  background: rgba(10,12,16,0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  cursor: pointer;
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.nav-logo:hover { color: var(--blue-light); }
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: color var(--transition);
+}
+.nav-links a:hover { color: var(--text); }
+
+/* =============================================
+   HERO SECTION
+   ============================================= */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 48px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 70% 40%, rgba(37,99,235,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 60% at 20% 80%, rgba(29,78,216,0.08) 0%, transparent 50%);
+}
+
+/* 우상단 고정 정보 */
+.hero-top-right {
+  position: absolute;
+  top: 100px;
+  right: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  text-align: right;
+}
+
+.hero-tr-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 3px;
+}
+
+.hero-tr-val {
+  display: block;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--blue-light);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  animation: heroFadeUp 0.7s cubic-bezier(0.4,0,0.2,1) 0.05s forwards;
+}
+.hero-label::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: var(--blue-light);
+}
+
+.hero-title {
+  font-size: clamp(52px, 7vw, 96px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 28px;
+}
+
+.hero-title em {
+  font-style: normal;
+  background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 50%, #93c5fd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: 17px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 480px;
+  margin-bottom: 48px;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 32px;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 60px;
+}
+
+.hero-scroll {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.hero-scroll-line {
+  width: 40px;
+  height: 1px;
+  background: var(--text-muted);
+  animation: scrollLine 2s ease-in-out infinite;
+}
+@keyframes scrollLine {
+  0%,100% { transform: scaleX(1); opacity: 0.4; }
+  50% { transform: scaleX(0.4); opacity: 1; }
+}
+
+/* 히어로 등장 애니메이션 */
+@keyframes heroFadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hero-animate {
+  opacity: 0;
+  animation: heroFadeUp 0.7s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+
+/* =============================================
+   SECTIONS COMMON
+   ============================================= */
+section {
+  padding: 100px 48px;
+  position: relative;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--blue-light);
+  margin-bottom: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-label span {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  max-width: 80px;
+}
+
+/* =============================================
+   ABOUT SECTION
+   ============================================= */
+#about {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(320px, 1fr);
+  gap: 80px;
+  align-items: start;
+}
+
+.about-heading {
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.about-heading em {
+  font-style: italic;
+  color: var(--blue-light);
+}
+
+.about-desc {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 48px;
+}
+
+.about-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.about-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  transition: border-color var(--transition);
+}
+.about-card:hover { border-color: var(--border-blue); }
+
+.about-card-num {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--blue-light);
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+}
+
+.about-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.about-card-desc {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* =============================================
+   WORK EXPERIENCE
+   ============================================= */
+#work {
+  border-top: 1px solid var(--border);
+}
+
+.work-items {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.work-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color var(--transition);
+  background: var(--bg-card);
+}
+.work-item:hover { border-color: var(--border-blue); }
+
+.work-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 36px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.work-header-left h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 0;
+  margin-top: 4px;
+}
+
+.work-header-left .work-meta {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 0;
+}
+
+.work-role-badge {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 3px 10px;
+  vertical-align: middle;
+  margin-left: 10px;
+  display: inline-block;
+}
+
+.work-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.work-toggle-btn .toggle-arrow {
+  font-size: 16px;
+  transition: transform var(--transition);
+  display: inline-block;
+}
+
+.work-item:hover .work-toggle-btn {
+  border-color: var(--border-blue);
+  color: var(--blue-light);
+  background: var(--blue-subtle);
+}
+
+.work-item.open .work-toggle-btn {
+  background: var(--blue-subtle);
+  border-color: var(--border-blue);
+  color: var(--blue-light);
+}
+
+.work-item.open .work-toggle-btn .toggle-arrow {
+  transform: rotate(180deg);
+}
+
+/* 기존 work-toggle-icon 호환 */
+.work-toggle-icon { display: none; }
+
+.work-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.38s cubic-bezier(0.4,0,0.2,1);
+  background: var(--bg3);
+  border-top: 0px solid var(--border);
+}
+
+.work-body-inner {
+  overflow: hidden;
+  padding: 0 36px;
+  transition: padding 0.38s cubic-bezier(0.4,0,0.2,1);
+}
+
+.work-item.open .work-body {
+  grid-template-rows: 1fr;
+  border-top: 1px solid var(--border);
+}
+
+.work-item.open .work-body-inner {
+  padding: 0 36px 32px;
+}
+
+/* 토글 힌트 (준비중 표시) */
+.work-toggle-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--blue-light);
+  background: var(--blue-subtle);
+  border: 1px solid var(--border-blue);
+  border-radius: 8px;
+  padding: 9px 16px;
+  margin-top: 20px;
+  letter-spacing: 0.02em;
+  opacity: 0.8;
+}
+
+.work-desc {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-top: 24px;
+  margin-bottom: 24px;
+  max-width: 680px;
+}
+
+.work-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.work-tag {
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 12px;
+}
+
+.work-stats {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.work-stat dt {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.work-stat dd {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* CTA 버튼 */
+.cta-case-study {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 16px 32px;
+  border-radius: 10px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition);
+  letter-spacing: -0.01em;
+}
+.cta-case-study:hover {
+  background: var(--blue-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(37,99,235,0.35);
+}
+.cta-case-study svg {
+  transition: transform var(--transition);
+}
+.cta-case-study:hover svg {
+  transform: translateX(4px);
+}
+
+.cta-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cta-design-system {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 15px 24px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition);
+  letter-spacing: -0.01em;
+}
+.cta-design-system:hover {
+  border-color: var(--border-blue);
+  color: var(--blue-light);
+  background: var(--blue-subtle);
+}
+
+/* Selected works gallery */
+.works-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.works-thumb {
+  background: var(--surface);
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 16/10;
+}
+
+.works-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.7;
+  transition: opacity var(--transition);
+}
+.works-thumb:hover img { opacity: 1; }
+
+/* =============================================
+   SKILLS
+   ============================================= */
+#skills {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.skills-group {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+}
+
+.skills-group-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blue-light);
+  margin-bottom: 20px;
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skill-tag {
+  font-size: 15px;
+  color: var(--text-secondary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 14px;
+  transition: all var(--transition);
+}
+.skill-tag:hover {
+  color: var(--text);
+  border-color: var(--border-blue);
+  background: var(--blue-subtle);
+}
+
+/* =============================================
+   EDUCATION
+   ============================================= */
+#edu {
+  border-top: 1px solid var(--border);
+}
+
+.edu-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.edu-degree-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.edu-degree-sub {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.edu-cert-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.edu-cert-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  transition: border-color var(--transition);
+}
+.edu-cert-card:hover { border-color: var(--border-blue); }
+
+.edu-cert-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.edu-cert-sub {
+  font-size: 16px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* =============================================
+   CONTACT
+   ============================================= */
+#contact {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+#contact::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px;
+  height: 500px;
+  background: radial-gradient(ellipse at center, rgba(37,99,235,0.18) 0%, rgba(29,78,216,0.08) 40%, transparent 70%);
+  pointer-events: none;
+}
+
+#contact > * {
+  position: relative;
+  z-index: 1;
+}
+
+.contact-tagline {
+  font-size: clamp(16px, 2vw, 20px);
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  font-style: italic;
+}
+
+.contact-email {
+  font-size: clamp(28px, 4vw, 52px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  text-decoration: none;
+  display: block;
+  margin-bottom: 40px;
+  transition: color var(--transition);
+}
+.contact-email:hover { color: var(--blue-light); }
+
+.contact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 16px 40px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+.contact-btn:hover {
+  background: var(--blue-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(37,99,235,0.35);
+}
+
+.contact-btns {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+}
+
+.contact-btn-outline {
+  background: transparent;
+  border: 1.5px solid var(--border-blue);
+  color: var(--blue-light);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.contact-btn-outline:hover {
+  background: var(--blue-subtle);
+  border-color: var(--blue-light);
+  box-shadow: 0 8px 32px rgba(37,99,235,0.15);
+  color: var(--text);
+}
+
+.footer-copy {
+  margin-top: 80px;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+
+/* =============================================
+   CASE STUDY PAGE
+   ============================================= */
+#page-case {
+  position: relative;
+}
+
+/* 우측 세로 네비 */
+.case-nav {
+  position: fixed;
+  right: 36px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.case-nav-line {
+  width: 1px;
+  background: var(--border);
+  flex: 1;
+  min-height: 20px;
+}
+
+.case-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+  cursor: pointer;
+}
+
+.case-nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid var(--text-muted);
+  background: transparent;
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+
+.case-nav-item.active .case-nav-dot {
+  background: var(--blue-light);
+  border-color: var(--blue-light);
+  box-shadow: 0 0 0 4px var(--blue-glow);
+  width: 10px;
+  height: 10px;
+}
+
+.case-nav-label {
+  position: absolute;
+  right: 20px;
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  text-align: right;
+}
+
+.case-nav-item:hover .case-nav-label,
+.case-nav-item.active .case-nav-label {
+  opacity: 1;
+  color: var(--text-secondary);
+}
+.case-nav-item.active .case-nav-label {
+  color: var(--blue-light);
+  font-weight: 600;
+}
+
+/* Case Study sections */
+.cs-section {
+  padding: 100px 120px 100px 80px;
+  border-bottom: 1px solid var(--border);
+  max-width: 1200px;
+}
+
+.cs-intro-section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
+  padding: 80px 80px 80px 80px;
+}
+
+@media (max-width: 900px) {
+  .cs-intro-section { padding: 80px 40px 60px !important; }
+}
+
+@media (max-width: 600px) {
+  .cs-intro-section { padding: 100px 20px 48px !important; }
+}
+
+.cs-tag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--blue-light);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cs-tag::before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 1px;
+  background: var(--blue-light);
+}
+
+.cs-heading {
+  font-size: clamp(28px, 3.5vw, 48px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 28px;
+}
+.cs-heading em {
+  font-style: italic;
+  color: var(--blue-light);
+}
+
+.cs-body {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.85;
+  max-width: 720px;
+}
+
+/* Hero section */
+#cs-intro {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 80px 120px 80px 80px;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+}
+
+.cs-intro-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 60% at 80% 30%, rgba(37,99,235,0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 40% at 10% 70%, rgba(29,78,216,0.07) 0%, transparent 50%);
+}
+
+.cs-kicker {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--blue-light);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cs-kicker::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: var(--blue-light);
+}
+
+.cs-main-title {
+  font-size: clamp(40px, 5.5vw, 80px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: 28px;
+}
+.cs-main-title em {
+  font-style: italic;
+  color: var(--blue-light);
+}
+
+.cs-main-sub {
+  font-size: 17px;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  max-width: 540px;
+  margin-bottom: 52px;
+}
+
+.cs-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(5, auto);
+  gap: 32px 48px;
+  margin-bottom: 60px;
+}
+
+.cs-meta-item dt {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.cs-meta-item dd {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.cs-impact-row {
+  display: flex;
+  gap: 40px;
+  padding: 28px 0;
+  border-top: 1px solid var(--border);
+}
+
+.cs-impact-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cs-impact-num {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.cs-impact-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* back to home btn */
+.cs-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 10px 0;
+  border: none;
+  background: none;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: color var(--transition);
+  margin-bottom: 60px;
+  position: relative;
+  z-index: 10;
+}
+.cs-back-btn:hover { color: var(--blue-light); }
+.cs-back-btn svg { transition: transform var(--transition); }
+.cs-back-btn:hover svg { transform: translateX(-4px); }
+
+/* Summary cards */
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.summary-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+}
+
+.summary-card-label {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--blue-light);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.summary-card-label svg {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+/* 제약 카드 - 붉은색 */
+.summary-card.constraint {
+  border-color: rgba(239,68,68,0.2);
+}
+.summary-card.constraint .summary-card-label {
+  color: #f87171;
+}
+.summary-card.constraint:hover {
+  border-color: rgba(239,68,68,0.4);
+}
+
+.summary-card-text {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+/* Research list */
+.research-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 36px;
+}
+
+.research-table th {
+  text-align: left;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text);
+  padding: 14px 0;
+  border-bottom: 2px solid var(--blue-dim);
+}
+
+.research-table td {
+  padding: 16px 0;
+  font-size: 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.research-table td:first-child {
+  color: var(--text-secondary);
+  width: 280px;
+}
+
+.research-table td:last-child {
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
+/* Insight cards */
+.insight-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 36px;
+}
+
+.insight-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 32px;
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  transition: border-color var(--transition);
+}
+.insight-item:hover { border-color: var(--border-blue); }
+
+.insight-num {
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--blue-light);
+  flex-shrink: 0;
+  opacity: 0.3;
+  line-height: 1;
+  margin-top: 2px;
+  min-width: 52px;
+}
+
+.insight-text {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+/* Persona */
+.persona-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 36px;
+}
+
+.persona-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+}
+
+.persona-icon {
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+
+.persona-name {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.persona-desc {
+  font-size: 16px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.persona-quote {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  font-style: italic;
+  border-left: 2px solid var(--blue-dim);
+  padding-left: 14px;
+  margin-bottom: 16px;
+}
+
+.persona-pains {
+  list-style: none;
+  font-size: 16px;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.persona-pains li::before {
+  content: '— ';
+  color: var(--blue-dim);
+}
+
+/* Principles */
+.principles-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 48px;
+}
+
+@media (max-width: 1100px) {
+  .principles-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .principles-grid { grid-template-columns: 1fr; }
+}
+
+/* =============================================
+   RESPONSIVE - TABLET (≤900px)
+   ============================================= */
+@media (max-width: 900px) {
+  #main-nav { padding: 16px 24px; }
+  .nav-links { gap: 20px; }
+  #hero { padding: 0 24px 60px; }
+  section { padding: 72px 24px; }
+  .about-grid { grid-template-columns: 1fr; gap: 40px; }
+  .about-heading { font-size: clamp(28px, 5vw, 42px); }
+  .work-header { padding: 20px 24px; flex-wrap: wrap; gap: 12px; }
+  .work-body-inner { padding: 0 24px; }
+  .work-item.open .work-body-inner { padding: 0 24px 24px; }
+  .work-stats { gap: 20px; flex-wrap: wrap; }
+  .skills-grid { grid-template-columns: repeat(2, 1fr); }
+  .edu-layout { grid-template-columns: 1fr; gap: 32px; }
+  .cs-section { padding: 64px 32px; max-width: 100%; }
+  #cs-intro { padding: 80px 32px 60px; min-height: auto; }
+  .cs-main-title { font-size: clamp(36px, 6vw, 60px); }
+  .cs-meta-grid { grid-template-columns: repeat(3, auto); gap: 20px 32px; }
+  .cs-impact-row { flex-wrap: wrap; gap: 24px; }
+  .summary-cards { grid-template-columns: 1fr; }
+  .persona-grid { grid-template-columns: 1fr; }
+  .principles-grid { grid-template-columns: repeat(2, 1fr); }
+  .flow-compare { grid-template-columns: 1fr; }
+  .screen-pair { grid-template-columns: 1fr !important; }
+  .impact-metrics { grid-template-columns: repeat(3, 1fr); }
+  .impact-table { font-size: 14px; }
+  .case-nav { display: none; }
+  .cs-footer { padding: 40px 24px; flex-direction: column; gap: 20px; text-align: center; }
+}
+
+/* =============================================
+   RESPONSIVE - MOBILE (≤600px)
+   ============================================= */
+@media (max-width: 600px) {
+  /* 네비 */
+  #main-nav { padding: 14px 16px; }
+  .nav-links { gap: 12px; }
+  .nav-links a { font-size: 11px; }
+
+  /* 히어로 */
+  #hero { padding: 0 20px 52px; }
+  .hero-title { font-size: clamp(36px, 10vw, 56px); line-height: 1.1; }
+  .hero-sub { font-size: 14px; }
+  .hero-meta { flex-direction: column; gap: 4px; font-size: 12px; }
+  .hero-label { font-size: 10px; }
+
+  /* 섹션 공통 */
+  section { padding: 52px 20px; }
+  .section-label { font-size: 10px; margin-bottom: 36px; }
+
+  /* about */
+  .about-heading { font-size: clamp(24px, 7vw, 36px); line-height: 1.2; }
+  .about-desc { font-size: 14px; }
+  .about-card-title { font-size: 15px; }
+  .about-card-desc { font-size: 14px; }
+
+  /* work */
+  .work-header { padding: 16px 20px; }
+  .work-header-left h3 { font-size: 15px; }
+  .work-header-left .work-meta { font-size: 10px; }
+  .work-role-badge { display: none; }
+  .work-toggle-btn { font-size: 11px; padding: 6px 10px; }
+  .work-body-inner { padding: 0 20px; }
+  .work-item.open .work-body-inner { padding: 0 20px 20px; }
+  .work-desc { font-size: 14px; }
+  .work-tag { font-size: 12px; padding: 4px 10px; }
+  .work-stats { flex-direction: column; gap: 12px; }
+  .work-stat dt { font-size: 18px; }
+  .works-gallery { grid-template-columns: 1fr; }
+  .cta-group { flex-direction: column; align-items: flex-start; }
+  .cta-case-study { font-size: 14px; padding: 14px 24px; }
+  .cta-design-system { font-size: 13px; padding: 12px 20px; }
+
+  /* skills */
+  .skills-grid { grid-template-columns: 1fr; }
+  .skills-group-title { font-size: 10px; }
+  .skill-tag { font-size: 13px; }
+
+  /* edu */
+  .edu-cert-grid { grid-template-columns: 1fr; }
+  .edu-degree-title { font-size: 18px; }
+  .edu-cert-title { font-size: 14px; }
+  .edu-cert-sub { font-size: 13px; }
+
+  /* contact */
+  .contact-btns { flex-direction: column; align-items: center; gap: 10px; }
+  .contact-email { font-size: clamp(18px, 5.5vw, 32px); }
+  .contact-tagline { font-size: 13px; }
+
+  /* 케이스스터디 공통 */
+  .cs-section { padding: 52px 20px; max-width: 100%; }
+
+  /* cs-intro */
+  #cs-intro {
+    padding: 72px 20px 48px;
+    min-height: 100vh;
+    justify-content: flex-end;
+  }
+  .cs-kicker { font-size: 10px; margin-bottom: 16px; }
+  .cs-main-title { font-size: clamp(28px, 8vw, 44px); line-height: 1.15; margin-bottom: 20px; }
+  .cs-main-sub { font-size: 14px; margin-bottom: 32px; }
+  .cs-meta-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 20px;
+    margin-bottom: 36px;
+  }
+  .cs-meta-item dt { font-size: 9px; }
+  .cs-meta-item dd { font-size: 13px; }
+  .cs-impact-row { gap: 14px; flex-wrap: wrap; padding: 20px 0; }
+  .cs-impact-num { font-size: 20px; }
+  .cs-impact-label { font-size: 11px; }
+  .cs-back-btn { font-size: 10px; margin-bottom: 32px; }
+
+  /* cs 본문 공통 */
+  .cs-heading { font-size: clamp(22px, 6vw, 36px); }
+  .cs-heading em { display: block; }
+  .cs-body { font-size: 14px; }
+  .cs-tag { font-size: 10px; }
+
+  /* summary */
+  .summary-card-label { font-size: 13px; }
+  .summary-card-text { font-size: 14px; }
+
+  /* research */
+  .research-table td { font-size: 13px; padding: 12px 0; word-break: keep-all; }
+  .research-table th { font-size: 13px; }
+  .research-table td:first-child { width: 70%; }
+  .research-table td:last-child { width: 30%; font-size: 13px; }
+
+  /* insight */
+  .insight-item { flex-direction: column; gap: 8px; padding: 20px; }
+  .insight-num { font-size: 24px; }
+  .insight-text { font-size: 14px; }
+
+  /* persona */
+  .persona-name { font-size: 15px; }
+  .persona-quote { font-size: 13px; }
+  .persona-pains { font-size: 13px; }
+
+  /* principles */
+  .principles-grid { grid-template-columns: 1fr; }
+  .principle-title { height: auto; font-size: 16px; }
+  .principle-desc { font-size: 13px; }
+
+  /* flow */
+  .flow-card-label { font-size: 13px; word-break: keep-all; }
+  .flow-compare { grid-template-columns: 1fr; }
+  .flow-card { padding: 20px 16px; }
+  .flow-step { font-size: 13px; padding: 8px 10px; word-break: keep-all; overflow-wrap: break-word; }
+  .flow-step-num { font-size: 12px; flex-shrink: 0; }
+
+  /* screen */
+  .change-list li { font-size: 13px; }
+  .screen-caption { font-size: 12px; }
+
+  /* impact metrics - 1열 전체 너비 */
+  .impact-metrics { grid-template-columns: 1fr !important; gap: 12px; }
+  .metric-card { padding: 28px 24px; width: 100%; }
+  .metric-num { font-size: 40px; }
+  .metric-label { font-size: 15px; }
+  .metric-sub { font-size: 13px; }
+
+  /* impact table - 가로 스크롤 */
+  .impact-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--radius); }
+  .impact-table { font-size: 13px; min-width: 500px; }
+  .impact-table th { font-size: 12px; padding: 10px 10px; }
+  .impact-table td { font-size: 13px; padding: 10px 10px; }
+
+  /* reflection */
+  .reflection-list li { font-size: 14px; padding: 16px 20px; }
+  .quote-block { padding: 24px 20px; margin: 36px 0; }
+  .quote-block p { font-size: 16px; }
+
+  /* cs-footer */
+  .cs-footer { padding: 32px 20px; flex-direction: column; gap: 16px; text-align: center; }
+}
+
+.principle-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+  transition: border-color var(--transition);
+}
+.principle-card:hover { border-color: var(--border-blue); }
+
+.principle-num {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  text-align: center;
+  width: 100%;
+}
+
+.principle-num svg { display: none; }
+
+.principle-title {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.45;
+  color: var(--blue-light);
+  text-align: center;
+  word-break: keep-all;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.principle-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.75;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  margin-top: 20px;
+  word-break: keep-all;
+}
+
+/* Flow comparison */
+.flow-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 36px;
+}
+
+@media (max-width: 900px) {
+  .flow-compare { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .flow-compare {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px;
+  }
+  .flow-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box;
+  }
+}
+
+.flow-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+}
+
+.flow-card-label {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.flow-card.before .flow-card-label { color: var(--text-muted); }
+.flow-card.after .flow-card-label { color: var(--blue-light); }
+
+.flow-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.flow-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  color: var(--text-secondary);
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--surface);
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.flow-step.highlight {
+  background: var(--blue-subtle);
+  color: var(--text);
+  border: 1px solid var(--border-blue);
+}
+
+.flow-step-num {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-muted);
+  width: 20px;
+  flex-shrink: 0;
+}
+.flow-step.highlight .flow-step-num { color: var(--blue-light); }
+
+/* Screen images */
+.screen-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 32px 0;
+}
+
+.screen-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.screen-item img {
+  width: 100%;
+  display: block;
+}
+
+.screen-caption {
+  padding: 16px 20px;
+  font-size: 16px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+}
+
+.screen-caption strong {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.change-list {
+  list-style: none;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.change-list li {
+  font-size: 16px;
+  color: var(--text-secondary);
+  padding-left: 22px;
+  position: relative;
+  line-height: 1.7;
+}
+
+.change-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--blue-light);
+  font-weight: 700;
+}
+
+.change-list li.bad::before {
+  content: '✕';
+  color: #ef4444;
+}
+
+/* Impact table */
+.impact-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin: 36px 0;
+}
+
+.metric-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  text-align: center;
+}
+
+.metric-num {
+  font-size: 44px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.metric-label {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.metric-sub {
+  font-size: 16px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.impact-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.impact-table th {
+  text-align: left;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text);
+  padding: 14px 16px;
+  border-bottom: 2px solid var(--blue-dim);
+}
+
+.impact-table td {
+  padding: 14px 16px;
+  font-size: 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.impact-table td:first-child { color: var(--text); }
+
+.impact-badge {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--blue-light);
+  background: var(--blue-subtle);
+  border-radius: 5px;
+  padding: 3px 10px;
+}
+
+/* Reflection */
+.reflection-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 36px;
+}
+
+.reflection-list li {
+  font-size: 16px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  padding: 24px 28px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--blue);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.quote-block {
+  margin: 60px 0;
+  padding: 40px 48px;
+  border-left: 3px solid var(--blue-light);
+  background: var(--blue-subtle);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.quote-block p {
+  font-size: 20px;
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.quote-block cite {
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  font-style: normal;
+}
+
+.reflection-bg-icon {
+  position: absolute;
+  right: 80px;
+  top: 60px;
+  width: 220px;
+  height: 220px;
+  color: var(--blue-light);
+  opacity: 0.04;
+  pointer-events: none;
+}
+
+.cs-footer {
+  padding: 60px 80px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg2);
+}
+
+.cs-footer-name {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.cs-footer-name strong {
+  font-size: 18px;
+  font-weight: 800;
+  display: block;
+  color: var(--text);
+}
+
+/* =============================================
+   EMAIL COPY TOAST
+   ============================================= */
+.toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: rgba(15, 30, 70, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(96, 165, 250, 0.45);
+  border-radius: 12px;
+  padding: 14px 28px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  z-index: 9999;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(59,130,246,0.15);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* =============================================
+   DESIGN SYSTEM PAGE
+   ============================================= */
+.ds-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.ds-img-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color var(--transition);
+}
+.ds-img-item:hover { border-color: var(--border-blue); }
+
+.ds-img-item img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.ds-img-caption {
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+}
+
+.ds-img-placeholder {
+  grid-column: 1 / -1;
+  padding: 60px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+}
+
+.ds-img-full {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 600px) {
+  .ds-gallery { grid-template-columns: 1fr; }
+  .ds-img-full { grid-column: 1; }
+}
+/* =============================================
+   CONTEXT FLOW DIAGRAM
+   ============================================= */
+.context-flow-diagram {
+  margin-top: 32px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-blue);
+  border-radius: 16px;
+  padding: 32px 36px;
+}
+
+.ctx-flow-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blue-light);
+  margin-bottom: 28px;
+}
+
+.ctx-flow-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.ctx-actor {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 24px;
+}
+
+.ctx-actor-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 4px 12px;
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
+}
+.ctx-actor-badge.inviter {
+  background: rgba(99,102,241,0.12);
+  color: #818cf8;
+  border: 1px solid rgba(99,102,241,0.25);
+}
+.ctx-actor-badge.invitee {
+  background: var(--blue-subtle);
+  color: var(--blue-light);
+  border: 1px solid var(--border-blue);
+}
+
+.ctx-actor-platform {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  letter-spacing: 0.04em;
+}
+
+.ctx-actor-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ctx-action {
+  font-size: 13px;
+  color: var(--text-secondary);
+  padding: 8px 12px;
+  background: var(--bg2);
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  line-height: 1.5;
+}
+
+.ctx-flow-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  min-width: 100px;
+  gap: 8px;
+  padding-top: 60px;
+}
+
+.ctx-arrow-line {
+  width: 1px;
+  height: 20px;
+  background: var(--border-blue);
+}
+
+.ctx-arrow-label {
+  font-size: 11px;
+  color: var(--blue-light);
+  text-align: center;
+  line-height: 1.5;
+  background: var(--blue-subtle);
+  border: 1px solid var(--border-blue);
+  border-radius: 7px;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+.ctx-flow-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 24px;
+  padding: 14px 18px;
+  background: var(--blue-subtle);
+  border: 1px solid var(--border-blue);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.ctx-flow-note svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--blue-light);
+}
+
+/* =============================================
+   INVITER PLACEHOLDER
+   ============================================= */
+.inviter-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 56px 40px;
+  border: 1px dashed var(--border-blue);
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(99,102,241,0.04) 0%, var(--blue-subtle) 100%);
+  text-align: center;
+}
+
+.inviter-placeholder-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
+.inviter-placeholder-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+
+.inviter-platform-badge {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #818cf8;
+  background: rgba(99,102,241,0.1);
+  border: 1px solid rgba(99,102,241,0.25);
+  border-radius: 6px;
+  padding: 5px 14px;
+}
+
+/* =============================================
+   FLOW SCREEN ROW (Before/After 화면 나열)
+   ============================================= */
+.flow-screens-row {
+  display: grid;
+  gap: 20px;
+  padding-bottom: 0;
+}
+
+.flow-screens-row.before-screens {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.flow-screens-row.after-screens {
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.flow-screen-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.flow-screen-item img {
+  width: 100%;
+  aspect-ratio: 9/16;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 14px;
+  border: 1.5px solid var(--border);
+  background: var(--bg-card);
+  transition: border-color var(--transition), transform var(--transition);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+.flow-screen-item:hover img {
+  border-color: var(--border-blue);
+  transform: translateY(-3px);
+}
+
+.flow-screen-item.problem-screen img {
+  border-color: rgba(239, 68, 68, 0.5);
+  box-shadow: 0 4px 20px rgba(239,68,68,0.1);
+}
+
+.flow-screen-step {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 3px 10px;
+  letter-spacing: 0.06em;
+}
+
+.flow-screen-step.after {
+  color: var(--blue-light);
+  background: var(--blue-subtle);
+  border-color: var(--border-blue);
+}
+
+.flow-screen-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.6;
+  font-weight: 500;
+}
+
+.screen-label-issue {
+  display: block;
+  color: #ef4444;
+  font-weight: 700;
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.screen-label-after {
+  display: block;
+  color: var(--blue-light);
+  font-weight: 700;
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.after-screens .flow-screen-item img {
+  border-color: var(--border-blue);
+  box-shadow: 0 4px 20px rgba(37,99,235,0.12);
+}
+
+/* Flow card enhancements */
+.flow-step.problem {
+  border-left: 2px solid rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.04);
+}
+
+.flow-step-tag {
+  font-size: 10px;
+  font-weight: 600;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 4px;
+  padding: 2px 7px;
+  margin-left: 6px;
+}
+
+.flow-step-tag-after {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--blue-light);
+  background: var(--blue-subtle);
+  border-radius: 4px;
+  padding: 2px 7px;
+  margin-left: 6px;
+}
+
+.flow-key-change {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 14px 16px;
+  background: var(--blue-subtle);
+  border: 1px solid var(--border-blue);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.flow-key-change svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--blue-light);
+}
+
+/* Key change cards */
+.key-change-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.key-change-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  transition: border-color var(--transition);
+}
+.key-change-card:hover { border-color: var(--border-blue); }
+
+.key-change-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.problem-icon {
+  background: rgba(239,68,68,0.1);
+  color: #ef4444;
+}
+.after-icon {
+  background: var(--blue-subtle);
+  color: var(--blue-light);
+}
+
+.key-change-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+.key-change-body {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 2px; }
+
+/* =============================================
+   HERO PROJECT STRIP
+   ============================================= */
+.hero-project-strip {
+  margin-bottom: 40px;
+  max-width: 720px;
+}
+
+.hero-project-card {
+  background: rgba(26, 32, 48, 0.7);
+  border: 1px solid var(--border-blue);
+  border-radius: 14px;
+  padding: 20px 28px;
+  transition: all var(--transition);
+  backdrop-filter: blur(8px);
+}
+.hero-project-card:hover {
+  background: rgba(37, 99, 235, 0.08);
+  border-color: rgba(59, 130, 246, 0.5);
+  transform: translateY(-2px);
+}
+
+.hero-proj-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.hero-proj-badge {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--blue-light);
+}
+
+.hero-proj-arrow {
+  font-size: 14px;
+  color: var(--blue-light);
+  transition: transform var(--transition);
+}
+.hero-project-card:hover .hero-proj-arrow {
+  transform: translateX(4px);
+}
+
+.hero-proj-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.hero-proj-kpis {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.hero-proj-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.hero-proj-kpi-num {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+.hero-proj-kpi-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
+/* =============================================
+   ANIMATIONS
+   ============================================= */
+.fade-up {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-up.visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* =============================================
+   WORK SCOPE ROW
+   ============================================= */
+.work-scope-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 16px 0 24px;
+  flex-wrap: wrap;
+}
+
+.work-scope-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.work-scope-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.work-scope-chip {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--blue-light);
+  background: var(--blue-subtle);
+  border: 1px solid var(--border-blue);
+  border-radius: 6px;
+  padding: 4px 12px;
+}
+
+/* =============================================
+   WORK CONTEXT NOTE
+   ============================================= */
+.work-context-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 16px 0 24px;
+  padding: 14px 18px;
+  background: var(--blue-subtle);
+  border: 1px solid var(--border-blue);
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 640px;
+}
+
+.work-context-note svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: var(--blue-light);
+}
+
+/* =============================================
+   WORKS THUMB CAPTION
+   ============================================= */
+.works-thumb {
+  position: relative;
+  background: var(--surface);
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 16/10;
+}
+
+.works-thumb-caption {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 10px 14px;
+  background: linear-gradient(to top, rgba(10,12,16,0.92) 0%, transparent 100%);
+  font-size: 11px;
+  color: var(--text-secondary);
+  opacity: 0;
+  transition: opacity var(--transition);
+  line-height: 1.5;
+}
+.works-thumb:hover .works-thumb-caption { opacity: 1; }
+
+/* =============================================
+   DESIGN SYSTEM COMING SOON
+   ============================================= */
+.ds-coming-soon {
+  grid-column: 1 / -1;
+  padding: 80px 40px;
+  text-align: center;
+  border: 1px dashed var(--border-blue);
+  border-radius: var(--radius);
+  background: var(--blue-subtle);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast">이메일이 복사되었습니다</div>
+
+<!-- =============================================
+   CASE STUDY PAGE
+   ============================================= -->
+
+
+  <!-- Side Nav -->
+  <nav class="case-nav" id="case-nav">
+    <div class="case-nav-line"></div>
+
+    <div class="case-nav-item active" data-section="cs-intro" onclick="scrollToCS('cs-intro')">
+      <div class="case-nav-dot"></div>
+      <span class="case-nav-label">Intro</span>
+    </div>
+    <div class="case-nav-line"></div>
+
+    <div class="case-nav-item" data-section="cs-summary" onclick="scrollToCS('cs-summary')">
+      <div class="case-nav-dot"></div>
+      <span class="case-nav-label">요약</span>
+    </div>
+    <div class="case-nav-line"></div>
+
+    <div class="case-nav-item" data-section="cs-context" onclick="scrollToCS('cs-context')">
+      <div class="case-nav-dot"></div>
+      <span class="case-nav-label">배경</span>
+    </div>
+    <div class="case-nav-line"></div>
+
+    <div class="case-nav-item" data-section="cs-research" onclick="scrollToCS('cs-research')">
+      <div class="case-nav-dot"></div>
+      <span class="case-nav-label">리서치</span>
+    </div>
+    <div class="case-nav-line"></div>
+
+    <div class="case-nav-item" data-section="cs-persona" onclick="scrollToCS('cs-persona')">
+      <div class="case-nav-dot"></div>
+      <span class="case-nav-label">페르소나</span>
+    </div>
+    <div class="case-nav-line"></div>
+
+    <div class="case-nav-item" data-section="cs-principles" onclick="scrollToCS('cs-principles')">
+      <div class="case-nav-dot"></div>
+      <span class="case-nav-label">설계 기준</span>
+    </div>
+    <div class="case-nav-line"></div>
+
+    <div class="case-nav-item" data-section="cs-solution" onclick="scrollToCS('cs-solution')">
+      <div class="case-nav-dot"></div>
+      <span class="case-nav-label">솔루션</span>
+    </div>
+    <div class="case-nav-line"></div>
+
+    <div class="case-nav-item" data-section="cs-impact" onclick="scrollToCS('cs-impact')">
+      <div class="case-nav-dot"></div>
+      <span class="case-nav-label">성과</span>
+    </div>
+    <div class="case-nav-line"></div>
+
+    <div class="case-nav-item" data-section="cs-reflection" onclick="scrollToCS('cs-reflection')">
+      <div class="case-nav-dot"></div>
+      <span class="case-nav-label">회고</span>
+    </div>
+    <div class="case-nav-line"></div>
+  </nav>
+
+  <!-- CS INTRO -->
+  <section id="cs-intro" class="cs-section cs-intro-section">
+    <div class="cs-intro-bg"></div>
+    <a class="cs-back-btn" href="index.html">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      홈으로 돌아가기
+    </a>
+    <div class="cs-kicker">UX Case Study · Club Minish MVP1 · 2023</div>
+    <h1 class="cs-main-title">
+      초대 기반 상담 예약 경험<br><em>재설계</em>
+    </h1>
+    <p class="cs-main-sub">
+      복잡하게 끊겨 있던 초대 · 상담 · 예약 플로우를<br>
+      하나의 이해 가능한 흐름으로 재설계했습니다.
+    </p>
+    <dl class="cs-meta-grid">
+      <div class="cs-meta-item">
+        <dt>Role</dt>
+        <dd>Product Designer<br>(UX + UI)</dd>
+      </div>
+      <div class="cs-meta-item">
+        <dt>Team</dt>
+        <dd>PM 1 · Designer 1(본인)<br>Developer 2</dd>
+      </div>
+      <div class="cs-meta-item">
+        <dt>Scope</dt>
+        <dd>UX 구조 설계 · 화면 설계<br>프로토타입 · QA</dd>
+      </div>
+      <div class="cs-meta-item">
+        <dt>Platform</dt>
+        <dd>iOS / Android<br>Mobile App</dd>
+      </div>
+      <div class="cs-meta-item">
+        <dt>Timeline</dt>
+        <dd>2023. 05 ~ 2024. 05<br>1년</dd>
+      </div>
+    </dl>
+    <div class="cs-impact-row">
+      <div class="cs-impact-item">
+        <span class="cs-impact-num">10→6</span>
+        <span class="cs-impact-label">핵심 예약 흐름 축소</span>
+      </div>
+      <div class="cs-impact-item">
+        <span class="cs-impact-num">87%</span>
+        <span class="cs-impact-label">과업 성공률 향상<br>(50% → 87%)</span>
+      </div>
+      <div class="cs-impact-item">
+        <span class="cs-impact-num">7/8</span>
+        <span class="cs-impact-label">상태 이해도 개선<br>(3/8 → 7/8)</span>
+      </div>
+      <div class="cs-impact-item">
+        <span class="cs-impact-num">5→3</span>
+        <span class="cs-impact-label">운영 확인 포인트 감소</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CS SUMMARY -->
+  <section id="cs-summary" class="cs-section">
+    <div class="cs-tag">00 · TL;DR</div>
+    <h2 class="cs-heading">핵심 <em>요약</em></h2>
+    <div class="summary-cards">
+      <div class="summary-card">
+        <div class="summary-card-label">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          문제
+        </div>
+        <div class="summary-card-text">초대-상담-예약 흐름이 10단계로 분절돼 사용자가 <strong style="color:var(--text)">현재 상태와 다음 액션을 이해하기 어려웠다</strong></div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          접근
+        </div>
+        <div class="summary-card-text"><strong style="color:var(--text)">사용자 8명 + 운영자 2명 인터뷰</strong>와 플로우 분석으로 핵심 구조 문제를 도출하고 재설계를 진행했다</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          해결
+        </div>
+        <div class="summary-card-text"><strong style="color:var(--text)">인증 절차 백엔드 이전</strong>, 온보딩 단순화, <strong style="color:var(--text)">상태값 언어 재정의</strong>, 지점·날짜·시간·상담분야 단일 화면 통합, 운영 확인 포인트 재구성</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card-label">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          결과
+        </div>
+        <div class="summary-card-text">프로토타입 기준 <strong style="color:var(--text)">과업 완료율과 상태 이해도 개선</strong>, 운영 수동 처리 감소</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CS CONTEXT -->
+  <section id="cs-context" class="cs-section">
+    <div class="cs-tag">01 · Context</div>
+    <h2 class="cs-heading">왜 이 프로젝트가 <em>중요했는가</em></h2>
+
+    <p class="cs-body">
+      Club Minish는 기존 고객(초대인)이 지인을 초대하면, 피초대인이 미니쉬 치과에서 상담을 신청하고 방문·시술 후 양측에게 리워드가 지급되는 멤버십 기반 초대 서비스입니다.
+    </p>
+
+    <!-- 서비스 UX 구조 설명 -->
+    <div class="context-flow-diagram">
+      <div class="ctx-flow-title">서비스 구조 — 두 사용자, 두 개의 화면</div>
+      <div class="ctx-flow-row">
+
+        <!-- 초대인 -->
+        <div class="ctx-actor">
+          <div class="ctx-actor-badge inviter">초대인 (기존 고객)</div>
+          <div class="ctx-actor-platform">앱 (iOS / Android)</div>
+          <div class="ctx-actor-actions">
+            <div class="ctx-action">① 초대장 생성</div>
+            <div class="ctx-action">② 카카오톡·문자로 링크 전송</div>
+            <div class="ctx-action">⑥ 피초대인 진행 상태 확인</div>
+            <div class="ctx-action">⑦ 리워드 수령</div>
+          </div>
+        </div>
+
+        <!-- 화살표 -->
+        <div class="ctx-flow-arrow">
+          <div class="ctx-arrow-line"></div>
+          <div class="ctx-arrow-label">초대 링크 전송<br><span style="font-size:10px; color:var(--text-muted);">카카오톡 / 문자</span></div>
+          <div class="ctx-arrow-line"></div>
+        </div>
+
+        <!-- 피초대인 -->
+        <div class="ctx-actor">
+          <div class="ctx-actor-badge invitee">피초대인 (신규 사용자)</div>
+          <div class="ctx-actor-platform">웹 브라우저 (링크 클릭 → 랜딩)</div>
+          <div class="ctx-actor-actions">
+            <div class="ctx-action">③ 링크 클릭 → 웹 랜딩페이지 오픈</div>
+            <div class="ctx-action">④ 초대 혜택 확인 + 상담 신청</div>
+            <div class="ctx-action">⑤ 방문 확정 후 시술</div>
+            <div class="ctx-action">⑦ 리워드 수령</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="ctx-flow-note">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        피초대인은 앱 설치 없이 <strong>링크만으로 웹 브라우저에서 모든 예약 과정을 완료</strong>합니다. 이 프로젝트의 핵심 설계 대상은 이 웹 기반 랜딩–예약 흐름이었습니다.
+      </div>
+    </div>
+
+    <p class="cs-body" style="margin-top:32px;">
+      MVP1 단계에서 가장 큰 과제는 <strong style="color:var(--text)">초대 → 상담 신청 → 예약 확정 → 방문 확인 → 리워드 지급</strong>으로 이어지는 전체 흐름이, 사용자 관점에서는 하나의 경험처럼 느껴지지 않는다는 점이었습니다. 링크를 클릭한 피초대인이 "지금 내가 예약을 한 건지, 신청만 한 건지, 다음에 뭘 해야 하는지"를 명확히 이해하지 못한 채 이탈하는 패턴이 반복됐습니다.
+    </p>
+
+    <div class="summary-cards" style="margin-top:32px;">
+      <div class="summary-card constraint">
+        <div class="summary-card-label">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          제약 01 — 운영 구조 고려
+        </div>
+        <div class="summary-card-text">CS 매니저의 수동 확인 프로세스를 완전히 없애기 어려운 운영 현실 안에서 설계해야 했습니다.</div>
+      </div>
+      <div class="summary-card constraint">
+        <div class="summary-card-label">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          제약 02 — MVP 범위 한정
+        </div>
+        <div class="summary-card-text">전체 리뉴얼이 아닌 MVP1 범위 내 개선으로, 기존 기능을 활용하되 인지 부담을 줄이는 방향으로 접근했습니다.</div>
+      </div>
+      <div class="summary-card constraint">
+        <div class="summary-card-label">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          제약 03 — 정보 비대칭
+        </div>
+        <div class="summary-card-text">초대인(앱)과 피초대인(웹)이 서로 다른 플랫폼에서 서로 다른 정보를 보는 구조에서, 양쪽 모두에게 명확한 상태 안내가 필요했습니다.</div>
+      </div>
+      <div class="summary-card constraint">
+        <div class="summary-card-label">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          제약 04 — 빠른 런칭 일정
+        </div>
+        <div class="summary-card-text">개발 일정을 고려해 구조 변경의 영향 범위를 최소화하면서도 핵심 UX 개선을 반영해야 했습니다.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CS RESEARCH -->
+  <section id="cs-research" class="cs-section">
+    <div class="cs-tag">02 · Research</div>
+    <h2 class="cs-heading">무엇을 조사했고, <em>무엇을 발견했는가</em></h2>
+    <table class="research-table">
+      <thead>
+        <tr>
+          <th>조사 방법</th>
+          <th>규모</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>피초대 사용자 인터뷰</td><td>4명</td></tr>
+        <tr><td>기존 고객 (초대인) 인터뷰</td><td>2명</td></tr>
+        <tr><td>CS / 운영 담당자 인터뷰</td><td>2명</td></tr>
+        <tr><td>기존 플로우 / 정책 문서 분석</td><td>—</td></tr>
+        <tr><td>예약 신청 시나리오 점검</td><td>—</td></tr>
+        <tr><td>상태값 / 리워드 정책 매핑</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <div class="insight-list">
+      <div class="insight-item">
+        <div class="insight-num">01</div>
+        <div class="insight-text">사용자는 혜택보다 <strong style="color:var(--text)">"지금 내가 뭘 해야 하는지"</strong>를 먼저 알고 싶어 한다. 초대 메시지를 받았을 때 첫 질문은 "예약이 된 건가, 신청만 하는 건가?"였다.</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-num">02</div>
+        <div class="insight-text"><strong style="color:var(--text)">신뢰 형성 전 개인정보 입력 요구</strong>가 이탈 위험을 높인다. 이름·번호·메모·병원 선택이 초반에 몰리면 사용자는 부담을 느낀다.</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-num">03</div>
+        <div class="insight-text">발행·전송·신청·확정·완료 같은 <strong style="color:var(--text)">상태값이 사용자 언어가 아니다</strong>. "나는 지금 어디 있는지" 이해하기 어렵다는 피드백이 반복됐다.</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-num">04</div>
+        <div class="insight-text">운영 측면에서 <strong style="color:var(--text)">수동 확인 포인트가 5개</strong>로, CS 개입이 잦다. 운영 마찰이 결국 사용자의 느린 확정 경험으로 돌아왔다.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CS PERSONA -->
+  <section id="cs-persona" class="cs-section" style="max-width:100%;">
+    <div class="cs-tag">03 · Persona</div>
+    <h2 class="cs-heading">누구를 위한 <em>설계인가</em></h2>
+    <div class="persona-grid">
+      <div class="persona-card">
+        <div class="persona-icon">👤</div>
+        <div class="persona-name">김민지 · 31세</div>
+        <div class="persona-desc">직장인 · 첫 상담 예약 사용자 (피초대인)</div>
+        <div class="persona-quote">"지인에게 받은 초대를 통해 상담을 신청할 때, 나는 지금 어떤 단계에 있는지 명확히 알고 싶다."</div>
+        <ul class="persona-pains">
+          <li>혜택보다 다음 단계 안내가 없어 불안하다</li>
+          <li>정보를 다 입력했는데 예약이 확정되지 않은 상태</li>
+          <li>치과 상담 자체에 심리적 부담이 있다</li>
+        </ul>
+      </div>
+      <div class="persona-card">
+        <div class="persona-icon">🤝</div>
+        <div class="persona-name">박서준 · 36세</div>
+        <div class="persona-desc">기존 고객 · 초대인</div>
+        <div class="persona-quote">"지인에게 초대를 보냈는데, 상대가 어디까지 진행했는지 알 수 없다."</div>
+        <ul class="persona-pains">
+          <li>초대/신청/완료 구분이 어렵다</li>
+          <li>리워드를 언제 받는지 기준이 불명확하다</li>
+        </ul>
+      </div>
+      <div class="persona-card">
+        <div class="persona-icon">🎧</div>
+        <div class="persona-name">CS 매니저 · 2년차</div>
+        <div class="persona-desc">서비스 운영자</div>
+        <div class="persona-quote">"신청 접수 후 전화 확인, 일정 확정, 내원 여부 확인까지 수동으로 처리해야 한다."</div>
+        <ul class="persona-pains">
+          <li>수동 확인 포인트가 많아 반복 업무가 과중하다</li>
+          <li>사용자 입력 품질이 낮아 추가 확인 통화가 필요하다</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- CS PRINCIPLES -->
+  <section id="cs-principles" class="cs-section">
+    <div class="cs-tag">04 · 설계 기준</div>
+    <h2 class="cs-heading">어떤 기준으로 <em>결정했는가</em></h2>
+    <div class="principles-grid">
+      <div class="principle-card">
+        <div class="principle-num">원칙 1</div>
+        <div class="principle-title">다음 행동이<br>항상 보여야 한다</div>
+        <div class="principle-desc">현재 상태 표시보다 다음 행동 CTA를 우선 노출한다. 사용자는 "지금 어디"보다 "지금 뭘"을 먼저 알고 싶어 한다.</div>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">원칙 2</div>
+        <div class="principle-title">사용자 언어로<br>상태를 번역한다</div>
+        <div class="principle-desc">운영 상태값(발행·전송·확정)을 사용자가 직관적으로 이해하는 언어로 재정의한다.</div>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">원칙 3</div>
+        <div class="principle-title">신청과 확정은<br>명확히 구분한다</div>
+        <div class="principle-desc">'신청 완료'와 '예약 확정'의 혼동을 제거한다. 단계 피드백을 명시적으로 제공해 기대치를 관리한다.</div>
+      </div>
+      <div class="principle-card">
+        <div class="principle-num">원칙 4</div>
+        <div class="principle-title">운영 복잡도는<br>사용자 화면에서 감춘다</div>
+        <div class="principle-desc">내부 확인 프로세스를 사용자에게 노출하지 않는다. 운영 마찰을 백엔드로 이동해 경험을 단순하게 만든다.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CS SOLUTION -->
+  <section id="cs-solution" class="cs-section">
+    <div class="cs-tag">05 · Solution</div>
+    <h2 class="cs-heading">기능을 줄인 게 아니라 <em>인지 단계를 재정의했다</em></h2>
+    <p class="cs-body">10단계를 6단계로 줄인 것의 본질은 화면 수 감소가 아닙니다. 사용자가 경험하는 "결정 포인트"를 재정의하고, 그 사이를 하나의 흐름으로 연결한 것입니다.</p>
+
+    <div class="flow-compare">
+      <div class="flow-card before">
+        <div class="flow-card-label">Before — 기존 구조 (10단계)</div>
+        <div class="flow-steps">
+          <div class="flow-step"><span class="flow-step-num">1</span>초대 메시지 수령</div>
+          <div class="flow-step problem"><span class="flow-step-num">2</span>사용자 인증 <span class="flow-step-tag">불필요한 마찰</span></div>
+          <div class="flow-step"><span class="flow-step-num">3</span>초대 정보 + 혜택 확인</div>
+          <div class="flow-step"><span class="flow-step-num">4</span>고객 정보 입력</div>
+          <div class="flow-step problem"><span class="flow-step-num">5</span>지점 선택 <span class="flow-step-tag">별도 화면</span></div>
+          <div class="flow-step problem"><span class="flow-step-num">6</span>날짜 선택 <span class="flow-step-tag">별도 화면</span></div>
+          <div class="flow-step problem"><span class="flow-step-num">7</span>시간 선택 <span class="flow-step-tag">별도 화면</span></div>
+          <div class="flow-step problem"><span class="flow-step-num">8</span>상담 분야 선택 <span class="flow-step-tag">별도 화면</span></div>
+          <div class="flow-step"><span class="flow-step-num">9</span>약관 동의</div>
+          <div class="flow-step"><span class="flow-step-num">10</span>상담 신청 완료</div>
+        </div>
+      </div>
+      <div class="flow-card after">
+        <div class="flow-card-label">After — 재설계 구조 (6단계)</div>
+        <div class="flow-steps">
+          <div class="flow-step highlight"><span class="flow-step-num">1</span>초대 메시지 수령</div>
+          <div class="flow-step highlight"><span class="flow-step-num">2</span>초대 정보 + 혜택 확인</div>
+          <div class="flow-step highlight"><span class="flow-step-num">3</span>고객 정보 입력 <span class="flow-step-tag-after">백엔드 자동 인증</span></div>
+          <div class="flow-step highlight"><span class="flow-step-num">4</span>지점 + 날짜 + 시간 + 상담분야 통합 선택</div>
+          <div class="flow-step highlight"><span class="flow-step-num">5</span>약관 동의 → 신청 완료 + 단계 안내</div>
+        </div>
+        <div class="flow-key-change">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          인증 화면 제거 — 초대받은 번호와 입력 번호 일치 여부를 백엔드에서 자동 검증. 불일치 시 다음 단계로 진행 불가.
+        </div>
+      </div>
+    </div>
+
+    <!-- Before 화면 흐름 -->
+    <div style="margin-top:56px;">
+      <div class="cs-tag" style="margin-bottom:20px;">Before — 기존 10단계 화면 흐름 (피초대인 · 웹)</div>
+      <div class="flow-screens-row before-screens">
+        <div class="flow-screen-item problem-screen">
+          <img src="images/screens/consultation_Before_01.png" alt="초대 메시지 수령">
+          <div class="flow-screen-step">01</div>
+          <div class="flow-screen-label">초대 메시지 수령</div>
+        </div>
+        <div class="flow-screen-item problem-screen">
+          <img src="images/screens/consultation_Before_02.png" alt="사용자 인증">
+          <div class="flow-screen-step">02</div>
+          <div class="flow-screen-label">사용자 인증<span class="screen-label-issue">→ 제거됨</span></div>
+        </div>
+        <div class="flow-screen-item">
+          <img src="images/screens/consultation_Before_03.png" alt="초대 정보 확인">
+          <div class="flow-screen-step">03</div>
+          <div class="flow-screen-label">초대 정보 + 혜택 확인</div>
+        </div>
+        <div class="flow-screen-item">
+          <img src="images/screens/consultation_Before_04.png" alt="고객 정보 입력">
+          <div class="flow-screen-step">04</div>
+          <div class="flow-screen-label">고객 정보 입력</div>
+        </div>
+        <div class="flow-screen-item problem-screen">
+          <img src="images/screens/consultation_Before_05.png" alt="지점 선택">
+          <div class="flow-screen-step">05</div>
+          <div class="flow-screen-label">지점 선택<span class="screen-label-issue">→ 통합됨</span></div>
+        </div>
+        <div class="flow-screen-item problem-screen">
+          <img src="images/screens/consultation_Before_06.png" alt="날짜 선택">
+          <div class="flow-screen-step">06</div>
+          <div class="flow-screen-label">날짜 선택<span class="screen-label-issue">→ 통합됨</span></div>
+        </div>
+        <div class="flow-screen-item problem-screen">
+          <img src="images/screens/consultation_Before_07.png" alt="시간 선택">
+          <div class="flow-screen-step">07</div>
+          <div class="flow-screen-label">시간 선택<span class="screen-label-issue">→ 통합됨</span></div>
+        </div>
+        <div class="flow-screen-item problem-screen">
+          <img src="images/screens/consultation_Before_08.png" alt="상담 분야 선택">
+          <div class="flow-screen-step">08</div>
+          <div class="flow-screen-label">상담 분야 선택<span class="screen-label-issue">→ 통합됨</span></div>
+        </div>
+        <div class="flow-screen-item">
+          <img src="images/screens/consultation_Before_09.png" alt="약관 동의">
+          <div class="flow-screen-step">09</div>
+          <div class="flow-screen-label">약관 동의</div>
+        </div>
+        <div class="flow-screen-item">
+          <img src="images/screens/consultation_Before_10.png" alt="신청 완료">
+          <div class="flow-screen-step">10</div>
+          <div class="flow-screen-label">신청 완료</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- After 화면 흐름 -->
+    <div style="margin-top:56px;">
+      <div class="cs-tag" style="margin-bottom:20px;">After — 재설계 6단계 화면 흐름 (피초대인 · 웹)</div>
+      <div class="flow-screens-row after-screens">
+        <div class="flow-screen-item">
+          <img src="images/screens/consultation_after_01.png" alt="초대 메시지 수령">
+          <div class="flow-screen-step after">01</div>
+          <div class="flow-screen-label">초대 메시지 수령</div>
+        </div>
+        <div class="flow-screen-item">
+          <img src="images/screens/consultation_after_02.png" alt="초대 정보 + 혜택 확인">
+          <div class="flow-screen-step after">02</div>
+          <div class="flow-screen-label">초대 정보 + 혜택 확인</div>
+        </div>
+        <div class="flow-screen-item">
+          <img src="images/screens/consultation_after_03.png" alt="고객 정보 입력">
+          <div class="flow-screen-step after">03</div>
+          <div class="flow-screen-label">고객 정보 입력<br><span class="screen-label-after">백엔드 자동 인증</span></div>
+        </div>
+        <div class="flow-screen-item">
+          <img src="images/screens/consultation_after_04.png" alt="지점·날짜·시간·상담분야 통합">
+          <div class="flow-screen-step after">04</div>
+          <div class="flow-screen-label">지점·날짜·시간·상담분야<br><span class="screen-label-after">4개 → 1화면 통합</span></div>
+        </div>
+        <div class="flow-screen-item">
+          <img src="images/screens/consultation_after_05.png" alt="약관 동의">
+          <div class="flow-screen-step after">05</div>
+          <div class="flow-screen-label">약관 동의</div>
+        </div>
+        <div class="flow-screen-item">
+          <img src="images/screens/consultation_after_06.png" alt="신청 완료 + 단계 안내">
+          <div class="flow-screen-step after">완료</div>
+          <div class="flow-screen-label">신청 완료<br><span class="screen-label-after">다음 단계 안내 표시</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 초대자 화면 (앱) - 준비중 -->
+    <div style="margin-top:56px;">
+      <div class="cs-tag" style="margin-bottom:20px;">초대인 화면 흐름 (초대인 · 앱)</div>
+      <div class="inviter-placeholder">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--blue-light); margin-bottom:12px;"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        <div class="inviter-placeholder-title">초대인 앱 화면 준비 중</div>
+        <div class="inviter-placeholder-desc">초대장 생성 → 링크 전송 → 피초대인 진행 상태 확인 → 리워드 수령으로 이어지는<br>초대인 전용 앱 화면 흐름을 곧 추가할 예정입니다.</div>
+        <div class="inviter-platform-badge">iOS / Android App</div>
+      </div>
+    </div>
+
+    <!-- Key Change 설명 -->
+    <div style="margin-top:56px;">
+      <div class="cs-tag" style="margin-bottom:20px;">핵심 변경 포인트</div>
+
+      <div class="key-change-cards">
+        <div class="key-change-card">
+          <div class="key-change-icon problem-icon">✕</div>
+          <div class="key-change-title">인증 절차 제거</div>
+          <div class="key-change-body">별도 인증 화면을 사용자에게 노출하지 않고, 고객 정보 입력 시 입력한 번호가 초대받은 번호와 일치하는지 백엔드에서 자동 검증. 불일치 시 다음 단계 진행 불가.</div>
+          <ul class="change-list" style="margin-top:12px;">
+            <li class="bad">Before: 별도 인증 화면 → 번호 입력 → OTP 확인 → 다음 단계</li>
+            <li>After: 고객 정보 입력 단계에서 백엔드 자동 인증으로 대체</li>
+          </ul>
+        </div>
+        <div class="key-change-card">
+          <div class="key-change-icon after-icon">✓</div>
+          <div class="key-change-title">지점·날짜·시간·상담분야 통합</div>
+          <div class="key-change-body">각각 별도 화면이었던 4개 선택 항목을 단일 화면에 통합. 아코디언 UI로 각 항목을 순서대로 선택하되, 전체 진행 상태가 한 화면에서 확인 가능.</div>
+          <ul class="change-list" style="margin-top:12px;">
+            <li class="bad">Before: 지점 → 날짜 → 시간 → 상담분야 각각 별도 화면 4개</li>
+            <li>After: 단일 화면 내 아코디언 구조로 통합, 선택 흐름 연속성 확보</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 단계 피드백 화면 -->
+    <div style="margin-top:48px;">
+      <div class="cs-tag" style="margin-bottom:16px;">신청 완료 — 단계 피드백</div>
+      <div class="screen-pair">
+        <div class="screen-item">
+          <img src="images/screens/invitation_applied.png" alt="신청 완료">
+          <div class="screen-caption"><strong>신청 완료</strong></div>
+        </div>
+        <div class="screen-item">
+          <img src="images/screens/invitation_applied_confirmed.png" alt="방문 확정">
+          <div class="screen-caption"><strong>방문 확정</strong></div>
+        </div>
+      </div>
+      <ul class="change-list">
+        <li class="bad">Before: 신청 후 다음 절차가 불명확 → 이탈 위험</li>
+        <li>After: 상담신청 → 전화상담 → 방문확정 스텝으로 현재 위치 표시</li>
+        <li>After: 지점명·주소·상담 정보·초대장 정보 한눈에 요약</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- CS IMPACT -->
+  <section id="cs-impact" class="cs-section">
+    <div class="cs-tag">06 · Impact</div>
+    <h2 class="cs-heading">무엇이 <em>달라졌는가</em></h2>
+    <div class="impact-metrics">
+      <div class="metric-card">
+        <span class="metric-num">10→6</span>
+        <div class="metric-label">예약 핵심 단계 축소</div>
+        <div class="metric-sub">인증 제거 + 지점·날짜·시간·상담분야 통합 (10→6)</div>
+      </div>
+      <div class="metric-card">
+        <span class="metric-num">87%</span>
+        <div class="metric-label">과업 성공률</div>
+        <div class="metric-sub">50% → 87%<br><span style="font-size:11px; color:var(--text-muted); margin-top:4px; display:block;">n=8, 프로토타입 사용성 테스트<br>동일 과업 기준 Before/After 비교</span></div>
+      </div>
+      <div class="metric-card">
+        <span class="metric-num">7/8</span>
+        <div class="metric-label">상태 이해도 개선</div>
+        <div class="metric-sub">3/8 → 7/8<br><span style="font-size:11px; color:var(--text-muted); margin-top:4px; display:block;">"현재 단계와 다음 행동을 말로<br>설명할 수 있는지" 인터뷰 응답 기준</span></div>
+      </div>
+    </div>
+
+    <div class="impact-table-wrap">
+    <table class="impact-table">
+      <thead>
+        <tr>
+          <th>지표</th>
+          <th>Before</th>
+          <th>After</th>
+          <th>비고</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>핵심 예약 플로우 단계 수</td>
+          <td>10단계</td>
+          <td><span class="impact-badge">6단계</span></td>
+          <td>인증 제거 + 지점·날짜·시간·상담분야 통합 (10→6)</td>
+        </tr>
+        <tr>
+          <td>과업 성공률</td>
+          <td>50%</td>
+          <td><span class="impact-badge">87%</span></td>
+          <td>n=8, 프로토타입 테스트</td>
+        </tr>
+        <tr>
+          <td>평균 완료 시간</td>
+          <td>3분 20초</td>
+          <td><span class="impact-badge">1분 40초</span></td>
+          <td>프로토타입 기준</td>
+        </tr>
+        <tr>
+          <td>상태 이해도 (단계 설명 가능)</td>
+          <td>3 / 8명</td>
+          <td><span class="impact-badge">7 / 8명</span></td>
+          <td>인터뷰 응답 기준</td>
+        </tr>
+        <tr>
+          <td>운영 수동 확인 포인트</td>
+          <td>5개</td>
+          <td><span class="impact-badge">3개</span></td>
+          <td>운영 플로우 재정의</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <p style="font-size:16px; color:var(--text-muted); margin-top:16px;">* 과업 성공률 및 시간 지표는 프로토타입 기반 사용성 테스트 결과입니다.</p>
+  </section>
+
+  <!-- CS REFLECTION -->
+  <section id="cs-reflection" class="cs-section" style="position:relative; overflow:hidden;">
+    <div class="cs-tag">07 · Reflection</div>
+    <h2 class="cs-heading">이 프로젝트에서 <em>얻은 것</em></h2>
+    <ul class="reflection-list">
+      <li>화면의 단순화만으로는 예약 전환이 개선되지 않는다. 실제 전환의 핵심은 사용자가 현재 상태를 이해하고 다음 행동을 확신하게 만드는 구조 설계였다.</li>
+      <li>운영자 확인 프로세스는 사용자 경험 바깥의 요소처럼 보이지만, 결국 확정 속도와 메시지 신뢰도에 직접적인 영향을 준다.</li>
+      <li>단계 수를 줄이는 것보다 각 단계의 역할을 명확히 하는 것이 더 중요했다. "기능 삭제"보다 "인지 단계 재정의"가 핵심이었다.</li>
+      <li>멤버십 혜택과 예약 흐름을 연결하면 전환이 자연스럽게 높아진다. 혜택은 목적이 아니라 진입 동기여야 한다.</li>
+    </ul>
+
+    <div class="quote-block">
+      <p>"화면을 줄이는 것이 아니라,<br>사용자가 생각해야 하는 순간을 없애는 것"</p>
+      <cite>이 프로젝트의 핵심 인사이트 — Club Minish MVP1, 2023</cite>
+    </div>
+  </section>
+
+  <!-- CS FOOTER -->
+  <div class="cs-footer">
+    <div class="cs-footer-name">
+      <strong>YDB</strong>
+      Yu Dabin · UX/UI Designer
+    </div>
+    <a class="cs-back-btn" href="index.html" style="margin-bottom:0;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      홈으로 돌아가기
+    </a>
+  </div>
+
+
+
+<script>
+// CASE STUDY NAV
+const csSections = ['cs-intro','cs-summary','cs-context','cs-research','cs-persona','cs-principles','cs-solution','cs-impact','cs-reflection'];
+
+function scrollToCS(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const offset = 20;
+  const top = el.getBoundingClientRect().top + window.scrollY - offset;
+  window.scrollTo({ top, behavior: 'smooth' });
+}
+
+function initCaseNav() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        document.querySelectorAll('.case-nav-item').forEach(item => {
+          item.classList.toggle('active', item.dataset.section === id);
+        });
+      }
+    });
+  }, { threshold: 0.3, rootMargin: '-10% 0px -60% 0px' });
+
+  csSections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+}
+
+// FADE IN
+const fadeObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => fadeObserver.observe(el));
+
+// 페이지 로드 시 nav 초기화
+window.addEventListener('DOMContentLoaded', initCaseNav);
+</script>
+</body>
+</html>
